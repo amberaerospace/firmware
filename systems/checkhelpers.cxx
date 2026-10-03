@@ -1,6 +1,10 @@
 #include "include/checkhelpers.hxx"
 #include <cstring>
 
+/*
+    Safety and systems checking
+*/
+
 char* strpreflight(enum preflight_checks pf) {
     switch (pf) {
         case PREFLIGHT_NO_GPS:
