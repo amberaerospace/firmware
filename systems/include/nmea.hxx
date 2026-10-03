@@ -132,4 +132,6 @@ struct gxgsv_msg {
     int32_t sigid;
 };
 
+char* nmea_ident(const char*);
+
 #endif
