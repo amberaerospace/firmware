@@ -1,8 +1,8 @@
 #pragma once
-#ifndef _CHECKS_HXX_
-#define _CHECKS_HXX_
+#ifndef _CHECKHELPERS_HXX_
+#define _CHECKHELPERS_HXX_
 
-enum pfchecks {
+enum preflight_checks {
     PREFLIGHT_NO_GPS, // "no GPS found"
     PREFLIGHT_NO_MAG, // "no magnetometer found"
     PREFLIGHT_NO_BAR, // "no barometer found"
@@ -21,7 +21,10 @@ enum pfchecks {
     PREFLIGHT_GPS_DFT, // "GPS coordinate drift"
     PREFLIGHT_CL_PROP, // "clear prop before flight"
     PREFLIGHT_ACT_FAIL, // "actuators failure"
-    PREFLIGHT_WTH_WIND, // "extreme windy conditions"
+    PREFLIGHT_WTH_WIND, // "extreme weather conditions"
+    PREFLIGHT_SYS_FAIL // "system failure"
 };
+
+char* strpreflight(enum preflight_checks);
 
 #endif

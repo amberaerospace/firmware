@@ -1,7 +1,7 @@
-#include "include/checks.hxx"
+#include "include/checkhelpers.hxx"
 #include <cstring>
 
-char* strpreflight(enum pfchecks pf) {
+char* strpreflight(enum preflight_checks pf) {
     switch (pf) {
         case PREFLIGHT_NO_GPS:
             return strdup("No GPS found on-board.");
@@ -41,6 +41,8 @@ char* strpreflight(enum pfchecks pf) {
             return strdup("Actuator system failure.");
         case PREFLIGHT_WTH_WIND:
             return strdup("Extreme weather conditions.");
+        case PREFLIGHT_SYS_FAIL:
+            return strdup("Aircraft system failure.");
         default:
             return NULL;
     }
