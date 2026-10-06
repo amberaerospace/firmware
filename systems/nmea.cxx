@@ -138,7 +138,7 @@ struct gngga_msg* nmea_gngga(const std::string& buf) {
     const auto stid = static_cast<int16_t>(std::stoi(vec[13]));
     const auto alt = static_cast<double>(std::stof(vec[8]));
     const auto hdop = static_cast<double>(std::stof(vec[7]));
-    const auto age = static_cast<double>(std::stof(vec[12]));
+    const auto age = static_cast<float>(std::stof(vec[12]));
     const auto lat = nmea_clat(vec[1]);
     if (lat == nullptr) {
         free(nm);
