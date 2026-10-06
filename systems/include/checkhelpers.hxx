@@ -1,6 +1,5 @@
 #pragma once
-#ifndef _CHECKHELPERS_HXX_
-#define _CHECKHELPERS_HXX_
+#include <string>
 
 enum preflight_checks {
     PREFLIGHT_NO_GPS, // "no GPS found"
@@ -25,6 +24,4 @@ enum preflight_checks {
     PREFLIGHT_SYS_FAIL // "system failure"
 };
 
-char* strpreflight(enum preflight_checks);
-
-#endif
+std::string strpreflight(enum preflight_checks);

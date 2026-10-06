@@ -1,6 +1,5 @@
 #pragma once
-#ifndef _NMEA_HXX_
-#define _NMEA_HXX_
+#include <string>
 #include <cstdint>
 
 enum nmea_quality {
@@ -14,8 +13,7 @@ enum nmea_quality {
 struct nmea_clock {
     int8_t hours;
     int8_t minutes;
-    int8_t seconds;
-    int16_t millis;
+    double seconds;
 };
 
 struct gngga_msg {
@@ -132,6 +130,5 @@ struct gxgsv_msg {
     int32_t sigid;
 };
 
-char* nmea_ident(const char*);
-
-#endif
+std::string nmea_ident(const std::string&);
+std::vector<std::string> nmea_idents(const std::string& msg);
