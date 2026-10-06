@@ -218,3 +218,28 @@ struct gngll_msg* nmea_gngll(const std::string& buf) {
 
     return nm;
 }
+
+struct gngst_msg* nmea_gngst(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    const auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    if (vec.size() < 8) return nullptr;
+
+    const auto nm = static_cast<struct gngst_msg*>(calloc(1, sizeof(struct gngst_msg)));
+    if (nm == nullptr) return nullptr;
+
+    const auto tm = nmea_time(vec[0]);
+    if (tm == nullptr) { free(nm); return nullptr; }
+    nm->time = tm;
+
+    nm->rmsrange = static_cast<double>(std::stof(vec[1]));
+    nm->stdmajor = static_cast<double>(std::stof(vec[2]));
+    nm->stdminor = static_cast<double>(std::stof(vec[3]));
+    nm->angmajor = static_cast<double>(std::stof(vec[4]));
+    nm->stdlat = static_cast<double>(std::stof(vec[5]));
+    nm->stdlon = static_cast<double>(std::stof(vec[6]));
+    nm->stdalt = static_cast<double>(std::stof(vec[7]));
+}

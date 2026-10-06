@@ -144,3 +144,4 @@ struct nmea_lat* nmea_clat(const std::string&);
 struct nmea_lon* nmea_clon(const std::string&);
 struct gngga_msg* nmea_gngga(const std::string&);
 struct gngll_msg* nmea_gngll(const std::string&);
+struct gngst_msg* nmea_gngst(const std::string&);
