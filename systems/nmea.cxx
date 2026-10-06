@@ -173,3 +173,48 @@ struct gngga_msg* nmea_gngga(const std::string& buf) {
 
     return nm;
 }
+
+struct gngll_msg* nmea_gngll(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    const auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    if (vec.size() < 7) return nullptr;
+
+    const auto nm = static_cast<struct gngll_msg*>(calloc(1, sizeof(struct gngll_msg)));
+    if (nm == nullptr) return nullptr;
+
+    const char latns = *(vec[1].c_str());
+    const char lonew = *(vec[3].c_str());
+    const char status = *(vec[5].c_str());
+    const char mode = *(vec[6].c_str());
+    const auto lat = nmea_clat(vec[0]);
+    if (lat == nullptr) {
+        free(nm);
+        return nullptr;
+    }
+    const auto lon = nmea_clon(vec[2]);
+    if (lon == nullptr) {
+        free(nm);
+        free(lat);
+        return nullptr;
+    }
+    const auto tm = nmea_time(vec[4]);
+    if (tm == nullptr) {
+        free(nm);
+        free(lat);
+        free(lon);
+        return nullptr;
+    }
+
+    nm->lat = lat;
+    nm->latns = latns;
+    nm->lon = lon;
+    nm->lonew = lonew;
+    nm->status = status;
+    nm->mode = mode;
+
+    return nm;
+}
