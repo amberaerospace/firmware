@@ -242,4 +242,6 @@ struct gngst_msg* nmea_gngst(const std::string& buf) {
     nm->stdlat = static_cast<double>(std::stof(vec[5]));
     nm->stdlon = static_cast<double>(std::stof(vec[6]));
     nm->stdalt = static_cast<double>(std::stof(vec[7]));
+
+    return nm;
 }
