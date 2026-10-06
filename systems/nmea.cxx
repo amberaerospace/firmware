@@ -123,8 +123,9 @@ struct gngga_msg* nmea_gngga(const std::string& buf) {
     if (const auto pos = buf.find('*'); pos != std::string::npos) {
             if (nmea_checksum(buf) == false) return nullptr;
     }
-    const auto vec = nmea_idents(buf);
+    auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
     if (vec.size() < 14) return nullptr;
 
     const auto nm = static_cast<struct gngga_msg*>(calloc(1, sizeof(struct gngga_msg)));
@@ -179,8 +180,9 @@ struct gngll_msg* nmea_gngll(const std::string& buf) {
     if (const auto pos = buf.find('*'); pos != std::string::npos) {
         if (nmea_checksum(buf) == false) return nullptr;
     }
-    const auto vec = nmea_idents(buf);
+    auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
     if (vec.size() < 7) return nullptr;
 
     const auto nm = static_cast<struct gngll_msg*>(calloc(1, sizeof(struct gngll_msg)));
@@ -224,8 +226,9 @@ struct gngst_msg* nmea_gngst(const std::string& buf) {
     if (const auto pos = buf.find('*'); pos != std::string::npos) {
         if (nmea_checksum(buf) == false) return nullptr;
     }
-    const auto vec = nmea_idents(buf);
+    auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
     if (vec.size() < 8) return nullptr;
 
     const auto nm = static_cast<struct gngst_msg*>(calloc(1, sizeof(struct gngst_msg)));
@@ -242,6 +245,25 @@ struct gngst_msg* nmea_gngst(const std::string& buf) {
     nm->stdlat = static_cast<double>(std::stof(vec[5]));
     nm->stdlon = static_cast<double>(std::stof(vec[6]));
     nm->stdalt = static_cast<double>(std::stof(vec[7]));
+
+    return nm;
+}
+
+struct gnhdt_msg* nmea_gnhdt(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 2) return nullptr;
+
+    const auto nm = static_cast<struct gnhdt_msg*>(calloc(1, sizeof(struct gnhdt_msg)));
+    if (nm == nullptr) return nullptr;
+
+    nm->heading = static_cast<double>(std::stof(vec[0]));
+    nm->tind = *(vec[1].c_str());
 
     return nm;
 }
