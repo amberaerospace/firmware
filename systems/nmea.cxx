@@ -3,7 +3,6 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
-#include <cstdbool>
 #include <cstdint>
 
 /*
@@ -264,6 +263,42 @@ struct gnhdt_msg* nmea_gnhdt(const std::string& buf) {
 
     nm->heading = static_cast<double>(std::stof(vec[0]));
     nm->tind = *(vec[1].c_str());
+
+    return nm;
+}
+
+struct gnvtg_msg* nmea_gnvtg(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 9) return nullptr;
+
+    const auto nm = static_cast<struct gnvtg_msg*>(calloc(1, sizeof(struct gnvtg_msg)));
+    if (nm == nullptr) return nullptr;
+
+    const double cogtrue = std::stof(vec[0]);
+    const char cogreft = *(vec[1].c_str());
+    const double cogmag = std::stof(vec[2]);
+    const char cogrefm = *(vec[3].c_str());
+    const double sogknot = std::stof(vec[4]);
+    const char sogunitn = *(vec[5].c_str());
+    const double sogkph = std::stof(vec[6]);
+    const char sogunitk = *(vec[7].c_str());
+    const char mode = *(vec[8].c_str());
+
+    nm->cogtrue = cogtrue;
+    nm->cogreft = cogreft;
+    nm->cogmag = cogmag;
+    nm->cogrefm = cogrefm;
+    nm->sogknot = sogknot;
+    nm->sogunitn = sogunitn;
+    nm->sogkph = sogkph;
+    nm->sogunitk = sogunitk;
+    nm->mode = mode;
 
     return nm;
 }

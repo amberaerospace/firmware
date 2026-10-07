@@ -2,7 +2,6 @@
 #include <string>
 #include <cstdint>
 #include <vector>
-#include <cstdbool>
 
 enum nmea_quality {
     NMQ_INVALID = 0,
@@ -146,3 +145,4 @@ struct gngga_msg* nmea_gngga(const std::string&);
 struct gngll_msg* nmea_gngll(const std::string&);
 struct gngst_msg* nmea_gngst(const std::string&);
 struct gnhdt_msg* nmea_gnhdt(const std::string&);
+struct gnvtg_msg* nmea_gnvtg(const std::string&);
