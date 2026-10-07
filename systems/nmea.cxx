@@ -338,3 +338,31 @@ struct gnzda_msg* nmea_gnzda(const std::string& buf) {
 
     return nm;
 }
+
+struct gngsa_msg* nmea_gngsa(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 18) return nullptr;
+
+    const auto nm = static_cast<struct gngsa_msg*>(calloc(1, sizeof(struct gngsa_msg)));
+    if (nm == nullptr) return nullptr;
+
+    nm->modeop = static_cast<char>(*(vec[0].c_str()));
+    nm->modenav = static_cast<char>(*(vec[1].c_str()));
+
+    for (auto i = 2; i <= 13; i++) {
+        nm->ids[i - 2] = static_cast<int8_t>(std::stoi(vec[i]));
+    }
+
+    nm->pdop = static_cast<double>(std::stof(vec[14]));
+    nm->hdop = static_cast<double>(std::stof(vec[15]));
+    nm->vdop = static_cast<double>(std::stof(vec[16]));
+    nm->gnssid = static_cast<int8_t>(std::stoi(vec[17]));
+
+    return nm;
+}
