@@ -146,3 +146,4 @@ struct gngll_msg* nmea_gngll(const std::string&);
 struct gngst_msg* nmea_gngst(const std::string&);
 struct gnhdt_msg* nmea_gnhdt(const std::string&);
 struct gnvtg_msg* nmea_gnvtg(const std::string&);
+struct gnzda_msg* nmea_gnzda(const std::string&);

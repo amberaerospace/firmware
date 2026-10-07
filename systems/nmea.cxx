@@ -302,3 +302,39 @@ struct gnvtg_msg* nmea_gnvtg(const std::string& buf) {
 
     return nm;
 }
+
+struct gnzda_msg* nmea_gnzda(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 6) return nullptr;
+
+    const auto nm = static_cast<struct gnzda_msg*>(calloc(1, sizeof(struct gnzda_msg)));
+    if (nm == nullptr) return nullptr;
+
+    struct nmea_clock* tm = nmea_time(vec[0]);
+    if (tm == nullptr) {
+        free(nm);
+        return nullptr;
+    }
+
+    const auto day = static_cast<int8_t>(std::stoi(vec[1]));
+    const auto month = static_cast<int8_t>(std::stoi(vec[2]));
+    const auto year = static_cast<int16_t>(std::stoi(vec[3]));
+
+    const auto localhrs = static_cast<int8_t>(std::stoi(vec[4]));
+    const auto localmin = static_cast<int8_t>(std::stoi(vec[5]));
+
+    nm->time = tm;
+    nm->day = day;
+    nm->month = month;
+    nm->year = year;
+    nm->localhrs = localhrs;
+    nm->localmin = localmin;
+
+    return nm;
+}
