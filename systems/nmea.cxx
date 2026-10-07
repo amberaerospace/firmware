@@ -366,3 +366,73 @@ struct gngsa_msg* nmea_gngsa(const std::string& buf) {
 
     return nm;
 }
+
+struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 13) return nullptr;
+
+    const auto nm = static_cast<struct gnrmc_msg*>(calloc(1, sizeof(struct gnrmc_msg)));
+    if (nm == nullptr) return nullptr;
+
+    auto tm = nmea_time(vec[0]);
+    if (tm == nullptr) {
+        free(nm);
+        return nullptr;
+    }
+
+    auto lat = nmea_clat(vec[2]);
+    if (lat == nullptr) {
+        free(nm);
+        free(tm);
+        return nullptr;
+    }
+    auto lon = nmea_clon(vec[4]);
+    if (lon == nullptr) {
+        free(nm);
+        free(tm);
+        free(lat);
+        return nullptr;
+    }
+
+    const char latns = *(vec[3].c_str());
+    const char lonew = *(vec[5].c_str());
+    const char magvarew = *(vec[10].c_str());
+    const char mode = *(vec[11].c_str());
+    const char navstat = *(vec[12].c_str());
+    const char status = *(vec[1].c_str());
+
+    const auto speed = static_cast<double>(std::stof(vec[6]));
+    const auto course = static_cast<double>(std::stof(vec[7]));
+    const auto magvar = static_cast<double>(std::stof(vec[9]));
+
+    const std::string dt = vec[8];
+    const int8_t day = static_cast<int8_t>(std::stoi(dt.substr(0, 2)));
+    const int8_t month = static_cast<int8_t>(std::stoi(dt.substr(2, 2)));
+    const int8_t year = static_cast<int8_t>(std::stoi(dt.substr(4, 2)));
+
+    nm->time = tm;
+    nm->status = status;
+    nm->lat = lat;
+    nm->lon = lon;
+    nm->latns = latns;
+    nm->lonew = lonew;
+    nm->speed = speed;
+    nm->course = course;
+    nm->mode = mode;
+    nm->navstat = navstat;
+    nm->magvarew = magvarew;
+    nm->magvar = magvar;
+    nm->day = day;
+    nm->month = month;
+    nm->year = year;
+
+    return nm;
+}
+
+// todo: add missing gngsv (https://docs.fixposition.com/fd/nmea-gp-gsv)
