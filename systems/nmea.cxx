@@ -380,19 +380,19 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     const auto nm = static_cast<struct gnrmc_msg*>(calloc(1, sizeof(struct gnrmc_msg)));
     if (nm == nullptr) return nullptr;
 
-    auto tm = nmea_time(vec[0]);
+    const auto tm = nmea_time(vec[0]);
     if (tm == nullptr) {
         free(nm);
         return nullptr;
     }
 
-    auto lat = nmea_clat(vec[2]);
+    const auto lat = nmea_clat(vec[2]);
     if (lat == nullptr) {
         free(nm);
         free(tm);
         return nullptr;
     }
-    auto lon = nmea_clon(vec[4]);
+    const auto lon = nmea_clon(vec[4]);
     if (lon == nullptr) {
         free(nm);
         free(tm);
@@ -436,3 +436,17 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
 }
 
 // todo: add missing gngsv (https://docs.fixposition.com/fd/nmea-gp-gsv)
+struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
+    if (buf.empty()) return nullptr;
+    if (const auto pos = buf.find('*'); pos != std::string::npos) {
+        if (nmea_checksum(buf) == false) return nullptr;
+    }
+    auto vec = nmea_idents(buf);
+    if (vec.empty()) return nullptr;
+    vec.erase(vec.begin());
+    if (vec.size() < 4) return nullptr;
+
+    const auto nm = static_cast<struct gxgsv_msg*>(calloc(1, sizeof(struct gxgsv_msg)));
+    if (nm == nullptr) return nullptr;
+    // todo: complete
+}
