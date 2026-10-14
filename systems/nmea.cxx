@@ -465,7 +465,10 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     }
 
     const auto nm = static_cast<struct gxgsv_msg*>(calloc(1, sizeof(struct gxgsv_msg)));
-    if (nm == nullptr) return nullptr;
+    if (nm == nullptr) {
+        free(callv);
+        return nullptr;
+    }
 
     const auto sentences = static_cast<int8_t>(std::stoi(vec[0]));
     const auto sentnum = static_cast<int8_t>(std::stoi(vec[1]));
