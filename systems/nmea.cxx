@@ -9,6 +9,8 @@
  * GPS NMEA message utilities
  */
 
+// todo: add exception handling via safe calls
+
 std::string nmea_ident(const std::string& msg) {
     // We expect the message to be already split and stripped from '\r\n'.
     const char* message = msg.c_str();
@@ -435,7 +437,6 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     return nm;
 }
 
-// todo: add missing gngsv (https://docs.fixposition.com/fd/nmea-gp-gsv)
 struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     if (buf.empty()) return nullptr;
     if (const auto pos = buf.find('*'); pos != std::string::npos) {
@@ -443,10 +444,70 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     }
     auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
+    if (vec[0].length() < 2) return nullptr;
+    const char* mn = vec.begin()->c_str();
+    const auto callv = static_cast<char*>(calloc(3, sizeof(char)));
+    if (callv == nullptr) return nullptr;
+
+    memcpy(callv, mn, 2 * sizeof(char));
+    callv[2] = '\0';
     vec.erase(vec.begin());
-    if (vec.size() < 4) return nullptr;
+    if (vec.size() < 4) {
+        free(callv);
+        return nullptr;
+    }
+    if (vec.size() < ((std::stoi(vec[2]) * 4) + 4)) {
+        free(callv);
+        return nullptr;
+    }
 
     const auto nm = static_cast<struct gxgsv_msg*>(calloc(1, sizeof(struct gxgsv_msg)));
     if (nm == nullptr) return nullptr;
-    // todo: complete
+
+    const auto sentences = static_cast<int8_t>(std::stoi(vec[0]));
+    const auto sentnum = static_cast<int8_t>(std::stoi(vec[1]));
+    const auto numsats = static_cast<int16_t>(std::stoi(vec[2]));
+    const auto sigid = static_cast<int16_t>(std::stoi(vec[((numsats * 4) + 3)]));
+    const auto sats = static_cast<struct iwsat**>(calloc(4, sizeof(struct iwsat*)));
+    if (sats == nullptr) {
+        free(callv);
+        free(nm);
+        return nullptr;
+    }
+    for (auto i = 0; i < numsats; i++) {
+        sats[i] = static_cast<struct iwsat*>(calloc(1, sizeof(struct iwsat)));
+        if (sats[i] == nullptr) {
+            free(callv);
+            free(nm);
+            for (auto j = 0; j < i; j++) {
+                if (sats[j] != nullptr) {
+                    free(sats[j]);
+                }
+            }
+            free(sats);
+            return nullptr;
+        }
+        auto icall = strdup(callv);
+        if (icall == nullptr) {
+            icall = callv;
+        }
+        const auto satid = static_cast<int16_t>(std::stoi(vec[3 + (i * 4)]));
+        const auto azimuth = static_cast<int16_t>(std::stoi(vec[5 + (i * 4)]));
+
+        const auto elev = static_cast<int8_t>(std::stoi(vec[4 + (i * 4)]));
+        const auto cno = static_cast<int8_t>(std::stoi(vec[6 + (i * 4)]));
+
+        sats[i]->call = icall;
+        sats[i]->satid = satid;
+        sats[i]->azimuth = azimuth;
+        sats[i]->elev = elev;
+        sats[i]->cno = cno;
+    }
+    nm->call = callv;
+    nm->sentnum = sentnum;
+    nm->sentences = sentences;
+    nm->sigid = sigid;
+    nm->sats = sats;
+
+    return nm;
 }

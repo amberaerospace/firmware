@@ -118,8 +118,7 @@ struct gnzda_msg {
 };
 
 struct iwsat {
-    char call[3];
-    bool avail;
+    char* call; // call[3]
     int16_t satid;
     int8_t elev;
     int16_t azimuth;
@@ -127,11 +126,11 @@ struct iwsat {
 };
 
 struct gxgsv_msg {
-    char call[3];
+    char* call; // call[3]
     int8_t sentences;
     int8_t sentnum;
     int16_t numsats;
-    struct iwsat sats[4];
+    struct iwsat** sats; // sats[4]
     int32_t sigid;
 };
 
@@ -150,3 +149,4 @@ struct gnvtg_msg* nmea_gnvtg(const std::string&);
 struct gnzda_msg* nmea_gnzda(const std::string&);
 struct gngsa_msg* nmea_gngsa(const std::string&);
 struct gnrmc_msg* nmea_gnrmc(const std::string&);
+struct gxgsv_msg* nmea_gxgsv(const std::string&);
