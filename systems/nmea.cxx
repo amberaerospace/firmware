@@ -9,7 +9,29 @@
  * GPS NMEA message utilities
  */
 
-// todo: add exception handling via safe calls
+static int stoi_s(const std::string& s) {
+    try {
+        return std::stoi(s);
+    } catch (...) {
+        return 0;
+    }
+}
+
+static float stof_s(const std::string& s) {
+    try {
+        return std::stof(s);
+    } catch (...) {
+        return 0.0f;
+    }
+}
+
+static double stod_s(const std::string& s) {
+    try {
+        return std::stod(s);
+    } catch (...) {
+        return 0.0f;
+    }
+}
 
 std::string nmea_ident(const std::string& msg) {
     // We expect the message to be already split and stripped from '\r\n'.
@@ -83,9 +105,9 @@ struct nmea_clock* nmea_time(const std::string& buf) {
     const std::string hh = buf.substr(0, 2);
     const std::string mm = buf.substr(2, 2);
     const std::string ss = buf.substr(4);
-    const auto hhi = static_cast<int8_t>(std::stoi(hh));
-    const auto mmi = static_cast<int8_t>(std::stoi(mm));
-    const double ssf = std::stof(ss);
+    const auto hhi = static_cast<int8_t>(stoi_s(hh));
+    const auto mmi = static_cast<int8_t>(stoi_s(mm));
+    const double ssf = stof_s(ss);
     const auto nmtime = static_cast<struct nmea_clock*>(calloc(1, sizeof(struct nmea_clock)));
     if (nmtime == nullptr) return nullptr;
     nmtime->hours = hhi;
@@ -99,8 +121,8 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
     if (buf.length() < 10) return nullptr;
     const std::string dd = buf.substr(0, 2);
     const std::string mm = buf.substr(2);
-    const auto ddi = static_cast<int8_t>(std::stoi(dd));
-    const long double mmf = std::stof(mm);
+    const auto ddi = static_cast<int8_t>(stoi_s(dd));
+    const long double mmf = stof_s(mm);
     const auto nm = static_cast<struct nmea_lat*>(calloc(1, sizeof(struct nmea_lat)));
     if (nm == nullptr) return nullptr;
     nm->lat = mmf;
@@ -113,8 +135,8 @@ struct nmea_lon* nmea_clon(const std::string& buf) {
     if (buf.length() < 11) return nullptr;
     const std::string dd = buf.substr(0, 3);
     const std::string mm = buf.substr(3);
-    const auto ddi = static_cast<int16_t>(std::stoi(dd));
-    const long double mmf = std::stof(mm);
+    const auto ddi = static_cast<int16_t>(stoi_s(dd));
+    const long double mmf = stof_s(mm);
     const auto nm = static_cast<struct nmea_lon*>(calloc(1, sizeof(struct nmea_lon)));
     if (nm == nullptr) return nullptr;
     nm->lon = mmf;
@@ -138,12 +160,12 @@ struct gngga_msg* nmea_gngga(const std::string& buf) {
     const char latns = *(vec[2].c_str());
     const char lonew = *(vec[4].c_str());
     const char altunit = *(vec[9].c_str());
-    const auto quality = static_cast<int8_t>(std::stoi(vec[5]));
-    const auto satcnt = static_cast<int8_t>(std::stoi(vec[6]));
-    const auto stid = static_cast<int16_t>(std::stoi(vec[13]));
-    const auto alt = static_cast<double>(std::stof(vec[8]));
-    const auto hdop = static_cast<double>(std::stof(vec[7]));
-    const auto age = static_cast<float>(std::stof(vec[12]));
+    const auto quality = static_cast<int8_t>(stoi_s(vec[5]));
+    const auto satcnt = static_cast<int8_t>(stoi_s(vec[6]));
+    const auto stid = static_cast<int16_t>(stoi_s(vec[13]));
+    const auto alt = stod_s(vec[8]);
+    const auto hdop = stod_s(vec[7]);
+    const auto age = stof_s(vec[12]);
     const auto lat = nmea_clat(vec[1]);
     if (lat == nullptr) {
         free(nm);
@@ -243,13 +265,13 @@ struct gngst_msg* nmea_gngst(const std::string& buf) {
     if (tm == nullptr) { free(nm); return nullptr; }
     nm->time = tm;
 
-    nm->rmsrange = static_cast<double>(std::stof(vec[1]));
-    nm->stdmajor = static_cast<double>(std::stof(vec[2]));
-    nm->stdminor = static_cast<double>(std::stof(vec[3]));
-    nm->angmajor = static_cast<double>(std::stof(vec[4]));
-    nm->stdlat = static_cast<double>(std::stof(vec[5]));
-    nm->stdlon = static_cast<double>(std::stof(vec[6]));
-    nm->stdalt = static_cast<double>(std::stof(vec[7]));
+    nm->rmsrange = stod_s(vec[1]);
+    nm->stdmajor = stod_s(vec[2]);
+    nm->stdminor = stod_s(vec[3]);
+    nm->angmajor = stod_s(vec[4]);
+    nm->stdlat = stod_s(vec[5]);
+    nm->stdlon = stod_s(vec[6]);
+    nm->stdalt = stod_s(vec[7]);
 
     return nm;
 }
@@ -267,7 +289,7 @@ struct gnhdt_msg* nmea_gnhdt(const std::string& buf) {
     const auto nm = static_cast<struct gnhdt_msg*>(calloc(1, sizeof(struct gnhdt_msg)));
     if (nm == nullptr) return nullptr;
 
-    nm->heading = static_cast<double>(std::stof(vec[0]));
+    nm->heading = static_cast<double>(stod_s(vec[0]));
     nm->tind = *(vec[1].c_str());
 
     return nm;
@@ -286,13 +308,13 @@ struct gnvtg_msg* nmea_gnvtg(const std::string& buf) {
     const auto nm = static_cast<struct gnvtg_msg*>(calloc(1, sizeof(struct gnvtg_msg)));
     if (nm == nullptr) return nullptr;
 
-    const double cogtrue = std::stof(vec[0]);
+    const double cogtrue = stof_s(vec[0]);
     const char cogreft = *(vec[1].c_str());
-    const double cogmag = std::stof(vec[2]);
+    const double cogmag = stof_s(vec[2]);
     const char cogrefm = *(vec[3].c_str());
-    const double sogknot = std::stof(vec[4]);
+    const double sogknot = stof_s(vec[4]);
     const char sogunitn = *(vec[5].c_str());
-    const double sogkph = std::stof(vec[6]);
+    const double sogkph = stof_s(vec[6]);
     const char sogunitk = *(vec[7].c_str());
     const char mode = *(vec[8].c_str());
 
@@ -328,12 +350,12 @@ struct gnzda_msg* nmea_gnzda(const std::string& buf) {
         return nullptr;
     }
 
-    const auto day = static_cast<int8_t>(std::stoi(vec[1]));
-    const auto month = static_cast<int8_t>(std::stoi(vec[2]));
-    const auto year = static_cast<int16_t>(std::stoi(vec[3]));
+    const auto day = static_cast<int8_t>(stoi_s(vec[1]));
+    const auto month = static_cast<int8_t>(stoi_s(vec[2]));
+    const auto year = static_cast<int16_t>(stoi_s(vec[3]));
 
-    const auto localhrs = static_cast<int8_t>(std::stoi(vec[4]));
-    const auto localmin = static_cast<int8_t>(std::stoi(vec[5]));
+    const auto localhrs = static_cast<int8_t>(stoi_s(vec[4]));
+    const auto localmin = static_cast<int8_t>(stoi_s(vec[5]));
 
     nm->time = tm;
     nm->day = day;
@@ -362,13 +384,13 @@ struct gngsa_msg* nmea_gngsa(const std::string& buf) {
     nm->modenav = static_cast<char>(*(vec[1].c_str()));
 
     for (auto i = 2; i <= 13; i++) {
-        nm->ids[i - 2] = static_cast<int8_t>(std::stoi(vec[i]));
+        nm->ids[i - 2] = static_cast<int8_t>(stoi_s(vec[i]));
     }
 
-    nm->pdop = static_cast<double>(std::stof(vec[14]));
-    nm->hdop = static_cast<double>(std::stof(vec[15]));
-    nm->vdop = static_cast<double>(std::stof(vec[16]));
-    nm->gnssid = static_cast<int8_t>(std::stoi(vec[17]));
+    nm->pdop = static_cast<double>(stod_s(vec[14]));
+    nm->hdop = static_cast<double>(stod_s(vec[15]));
+    nm->vdop = static_cast<double>(stod_s(vec[16]));
+    nm->gnssid = static_cast<int8_t>(stoi_s(vec[17]));
 
     return nm;
 }
@@ -413,14 +435,14 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     const char navstat = *(vec[12].c_str());
     const char status = *(vec[1].c_str());
 
-    const auto speed = static_cast<double>(std::stof(vec[6]));
-    const auto course = static_cast<double>(std::stof(vec[7]));
-    const auto magvar = static_cast<double>(std::stof(vec[9]));
+    const auto speed = stod_s(vec[6]);
+    const auto course = stod_s(vec[7]);
+    const auto magvar = stod_s(vec[9]);
 
     const std::string dt = vec[8];
-    const int8_t day = static_cast<int8_t>(std::stoi(dt.substr(0, 2)));
-    const int8_t month = static_cast<int8_t>(std::stoi(dt.substr(2, 2)));
-    const int8_t year = static_cast<int8_t>(std::stoi(dt.substr(4, 2)));
+    const int8_t day = static_cast<int8_t>(stoi_s(dt.substr(0, 2)));
+    const int8_t month = static_cast<int8_t>(stoi_s(dt.substr(2, 2)));
+    const int8_t year = static_cast<int8_t>(stoi_s(dt.substr(4, 2)));
 
     nm->time = tm;
     nm->status = status;
@@ -460,7 +482,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
         free(callv);
         return nullptr;
     }
-    if (vec.size() < ((std::stoi(vec[2]) * 4) + 4)) {
+    if (vec.size() < ((stoi_s(vec[2]) * 4) + 4)) {
         free(callv);
         return nullptr;
     }
@@ -471,10 +493,10 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
         return nullptr;
     }
 
-    const auto sentences = static_cast<int8_t>(std::stoi(vec[0]));
-    const auto sentnum = static_cast<int8_t>(std::stoi(vec[1]));
-    const auto numsats = static_cast<int16_t>(std::stoi(vec[2]));
-    const auto sigid = static_cast<int16_t>(std::stoi(vec[((numsats * 4) + 3)]));
+    const auto sentences = static_cast<int8_t>(stoi_s(vec[0]));
+    const auto sentnum = static_cast<int8_t>(stoi_s(vec[1]));
+    const auto numsats = static_cast<int16_t>(stoi_s(vec[2]));
+    const auto sigid = static_cast<int16_t>(stoi_s(vec[((numsats * 4) + 3)]));
     const auto sats = static_cast<struct iwsat**>(calloc(4, sizeof(struct iwsat*)));
     if (sats == nullptr) {
         free(callv);
@@ -513,11 +535,11 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
             free(sats);
             return nullptr;
         }
-        const auto satid = static_cast<int16_t>(std::stoi(vec[3 + (i * 4)]));
-        const auto azimuth = static_cast<int16_t>(std::stoi(vec[5 + (i * 4)]));
+        const auto satid = static_cast<int16_t>(stoi_s(vec[3 + (i * 4)]));
+        const auto azimuth = static_cast<int16_t>(stoi_s(vec[5 + (i * 4)]));
 
-        const auto elev = static_cast<int8_t>(std::stoi(vec[4 + (i * 4)]));
-        const auto cno = static_cast<int8_t>(std::stoi(vec[6 + (i * 4)]));
+        const auto elev = static_cast<int8_t>(stoi_s(vec[4 + (i * 4)]));
+        const auto cno = static_cast<int8_t>(stoi_s(vec[6 + (i * 4)]));
 
         sats[i]->call = icall;
         sats[i]->satid = satid;
