@@ -22,7 +22,7 @@ std::string nmea_ident(const std::string& msg) {
             if (buf == nullptr) return "";
             strncpy(buf, message, 5);
             if (strcmp(buf + 2, "GGA") == 0)    { free(buf); return "GNGGA"; }
-            if (strcmp(buf + 2, "GLL") == 0)    { free(buf); return "GNGGL"; }
+            if (strcmp(buf + 2, "GGL") == 0)    { free(buf); return "GNGGL"; }
             if (strcmp(buf + 2, "GSA") == 0)    { free(buf); return "GNGSA"; }
             if (strcmp(buf + 2, "GST") == 0)    { free(buf); return "GNGST"; }
             if (strcmp(buf + 2, "HDT") == 0)    { free(buf); return "GNHDT"; }
@@ -83,7 +83,7 @@ struct nmea_clock* nmea_time(const std::string& buf) {
     const std::string mm = buf.substr(2, 2);
     const std::string ss = buf.substr(4);
     const auto hhi = static_cast<int8_t>(std::stoi(hh));
-    const auto mmi = static_cast<int8_t>(std::stoi(hh));
+    const auto mmi = static_cast<int8_t>(std::stoi(mm));
     const double ssf = std::stof(ss);
     const auto nmtime = static_cast<struct nmea_clock*>(calloc(1, sizeof(struct nmea_clock)));
     if (nmtime == nullptr) return nullptr;
@@ -220,6 +220,7 @@ struct gngll_msg* nmea_gngll(const std::string& buf) {
     nm->lonew = lonew;
     nm->status = status;
     nm->mode = mode;
+    nm->time = tm;
 
     return nm;
 }

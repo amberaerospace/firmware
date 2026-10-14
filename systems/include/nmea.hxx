@@ -47,7 +47,7 @@ struct gngll_msg {
     char latns;
     struct nmea_lon* lon;
     char lonew;
-    struct nmea_clock time;
+    struct nmea_clock* time;
     char status;
     char mode;
 };
