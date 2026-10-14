@@ -22,7 +22,7 @@ std::string nmea_ident(const std::string& msg) {
             if (buf == nullptr) return "";
             strncpy(buf, message, 5);
             if (strcmp(buf + 2, "GGA") == 0)    { free(buf); return "GNGGA"; }
-            if (strcmp(buf + 2, "GGL") == 0)    { free(buf); return "GNGGL"; }
+            if (strcmp(buf + 2, "GLL") == 0)    { free(buf); return "GNGLL"; }
             if (strcmp(buf + 2, "GSA") == 0)    { free(buf); return "GNGSA"; }
             if (strcmp(buf + 2, "GST") == 0)    { free(buf); return "GNGST"; }
             if (strcmp(buf + 2, "HDT") == 0)    { free(buf); return "GNHDT"; }
@@ -490,9 +490,18 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
             free(sats);
             return nullptr;
         }
-        auto icall = strdup(callv);
+        const auto icall = strdup(callv);
         if (icall == nullptr) {
-            icall = callv;
+            free(callv);
+            free(nm);
+            for (auto j = 0; j < i; j++) {
+                if (sats[j] != nullptr) {
+                    free(sats[j]);
+                }
+            }
+            free(sats[i]);
+            free(sats);
+            return nullptr;
         }
         const auto satid = static_cast<int16_t>(std::stoi(vec[3 + (i * 4)]));
         const auto azimuth = static_cast<int16_t>(std::stoi(vec[5 + (i * 4)]));
