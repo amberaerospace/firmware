@@ -46,7 +46,7 @@ std::vector<std::string> nmea_idents(const std::string& msg) {
     if (msg.empty()) return result;
     std::string buf = msg;
     if (const auto pos = buf.find('*'); pos != std::string::npos) buf.erase(pos);
-    while (!buf.empty() && buf.front() == '*' /* Encountered the checksum */) {
+    while (!buf.empty()) {
         if (const auto pos = buf.find_first_of(','); pos != std::string::npos) {
             result.push_back(buf.substr(0, pos));
             buf.erase(0, pos + 1);
