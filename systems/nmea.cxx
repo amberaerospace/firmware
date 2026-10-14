@@ -52,6 +52,7 @@ std::string nmea_ident(const std::string& msg) {
             if (strcmp(buf + 2, "VTG") == 0)    { free(buf); return "GNVTG"; }
             if (strcmp(buf + 2, "ZDA") == 0)    { free(buf); return "GNZDA"; }
             if (strcmp(buf + 2, "GSV") == 0)    { free(buf); return "GNGSV"; }
+            if (strcmp(buf + 2, "TXT") == 0)    { free(buf); return "GNTXT"; } // ex. u-blox AG boot messages
             free(buf);
             return "";
         } else {
