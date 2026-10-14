@@ -64,8 +64,10 @@ bool nmea_checksum(const std::string& msg) {
     if (const auto pos = buf.find('$'); pos != std::string::npos) buf.erase(0, pos + 1);
     unsigned int checksum = 0;
     if (const auto pos = buf.find('*'); pos != std::string::npos) {
-        checksum = std::stoul(buf.substr(pos), nullptr, 16);
+        checksum = std::stoul(buf.substr(pos + 1, 2), nullptr, 16);
         buf.erase(pos);
+    } else {
+        return false;
     }
     unsigned int nw = 0;
     for (const char c : msg) {
