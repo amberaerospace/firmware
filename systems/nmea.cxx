@@ -484,6 +484,9 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
             free(nm);
             for (auto j = 0; j < i; j++) {
                 if (sats[j] != nullptr) {
+                    if (sats[j]->call != nullptr) {
+                        free(sats[j]->call);
+                    }
                     free(sats[j]);
                 }
             }
@@ -496,6 +499,9 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
             free(nm);
             for (auto j = 0; j < i; j++) {
                 if (sats[j] != nullptr) {
+                    if (sats[j]->call != nullptr) {
+                        free(sats[j]->call);
+                    }
                     free(sats[j]);
                 }
             }
