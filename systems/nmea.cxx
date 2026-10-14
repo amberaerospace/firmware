@@ -67,7 +67,7 @@ bool nmea_checksum(const std::string& msg) {
         checksum = std::stoul(buf.substr(pos + 1, 2), nullptr, 16);
         buf.erase(pos);
     } else {
-        return false;
+        return true; // no checksum, don't process further
     }
     unsigned int nw = 0;
     for (const char c : msg) {
