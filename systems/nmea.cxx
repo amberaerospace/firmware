@@ -67,17 +67,24 @@ std::string nmea_ident(const std::string& msg) {
 std::vector<std::string> nmea_idents(const std::string& msg) {
     std::vector<std::string> result;
     if (msg.empty()) return result;
-    std::string buf = msg;
-    if (const auto pos = buf.find('*'); pos != std::string::npos) buf.erase(pos);
-    while (!buf.empty()) {
-        if (const auto pos = buf.find_first_of(','); pos != std::string::npos) {
-            result.push_back(buf.substr(0, pos));
-            buf.erase(0, pos + 1);
-        } else {
-            result.push_back(buf);
+
+    const auto star = msg.find('*');
+    const std::string buf = msg.substr(0, star);
+
+    size_t start = 0;
+
+    while (true) {
+        const auto pos = buf.find(',', start);
+
+        if (pos == std::string::npos) {
+            result.push_back(buf.substr(start));
             break;
         }
+
+        result.push_back(buf.substr(start, pos - start));
+        start = pos + 1;
     }
+
     return result;
 }
 
