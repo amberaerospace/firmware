@@ -21,14 +21,14 @@ std::string nmea_ident(const std::string& msg) {
             const auto buf = static_cast<char *>(calloc(6, sizeof(char)));
             if (buf == nullptr) return "";
             strncpy(buf, message, 5);
-            if (strcmp(buf, "GNGGA") == 0)      { free(buf); return "GNGGA"; }
-            if (strcmp(buf, "GNGLL") == 0)      { free(buf); return "GNGGL"; }
-            if (strcmp(buf, "GNGSA") == 0)      { free(buf); return "GNGSA"; }
-            if (strcmp(buf, "GNGST") == 0)      { free(buf); return "GNGST"; }
-            if (strcmp(buf, "GNHDT") == 0)      { free(buf); return "GNHDT"; }
-            if (strcmp(buf, "GNRMC") == 0)      { free(buf); return "GNRMC"; }
-            if (strcmp(buf, "GNVTG") == 0)      { free(buf); return "GNVTG"; }
-            if (strcmp(buf, "GNZDA") == 0)      { free(buf); return "GNZDA"; }
+            if (strcmp(buf + 2, "GGA") == 0)    { free(buf); return "GNGGA"; }
+            if (strcmp(buf + 2, "GLL") == 0)    { free(buf); return "GNGGL"; }
+            if (strcmp(buf + 2, "GSA") == 0)    { free(buf); return "GNGSA"; }
+            if (strcmp(buf + 2, "GST") == 0)    { free(buf); return "GNGST"; }
+            if (strcmp(buf + 2, "HDT") == 0)    { free(buf); return "GNHDT"; }
+            if (strcmp(buf + 2, "RMC") == 0)    { free(buf); return "GNRMC"; }
+            if (strcmp(buf + 2, "VTG") == 0)    { free(buf); return "GNVTG"; }
+            if (strcmp(buf + 2, "ZDA") == 0)    { free(buf); return "GNZDA"; }
             if (strcmp(buf + 2, "GSV") == 0)    { free(buf); return "GNGSV"; }
             free(buf);
             return "";
