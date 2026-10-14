@@ -481,7 +481,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     memcpy(callv, mn + 1, 2 * sizeof(char));
     callv[2] = '\0';
     vec.erase(vec.begin());
-    if (vec.size() < 4) {
+    if (vec.size() < 3) {
         free(callv);
         return nullptr;
     }
