@@ -60,20 +60,21 @@ std::vector<std::string> nmea_idents(const std::string& msg) {
 
 bool nmea_checksum(const std::string& msg) {
     if (msg.empty()) return false;
-    std::string buf = msg;
-    if (const auto pos = buf.find('$'); pos != std::string::npos) buf.erase(0, pos + 1);
-    unsigned int checksum = 0;
-    if (const auto pos = buf.find('*'); pos != std::string::npos) {
-        checksum = std::stoul(buf.substr(pos + 1, 2), nullptr, 16);
-        buf.erase(pos);
-    } else {
-        return true; // no checksum, don't process further
+    auto buf = msg.c_str();
+    if (*buf != '$') return false;
+    buf++;
+    unsigned int current = 0;
+    while (*buf != '\0' && *buf != '*') {
+        const auto c = *buf;
+        current ^= static_cast<uint8_t>(c);
+        buf++;
     }
-    unsigned int nw = 0;
-    for (const char c : msg) {
-        nw ^= static_cast<uint8_t>(c);
+    if (*buf == '*') {
+        buf++;
+        const auto provided = static_cast<unsigned int>(strtoul(buf, nullptr, 16));
+        return provided == current;
     }
-    return checksum == nw ? true : false;
+    return true;
 }
 
 struct nmea_clock* nmea_time(const std::string& buf) {
