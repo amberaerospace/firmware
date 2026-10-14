@@ -393,7 +393,7 @@ struct gngsa_msg* nmea_gngsa(const std::string& buf) {
     nm->pdop = static_cast<double>(stod_s(vec[14]));
     nm->hdop = static_cast<double>(stod_s(vec[15]));
     nm->vdop = static_cast<double>(stod_s(vec[16]));
-    nm->gnssid = static_cast<int8_t>(stoi_s(vec[17]));
+    nm->gnssid = vec.size() > 17 ? static_cast<int8_t>(stoi_s(vec[17])) : 0;
 
     return nm;
 }
