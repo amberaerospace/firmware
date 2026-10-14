@@ -504,7 +504,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
         free(nm);
         return nullptr;
     }
-    const auto numsatst = numsats > 4 ? 4 : numsats;
+    const auto numsatst = numsats > 0 ? (numsats > 4 ? 4 : numsats) : 0;
     for (auto i = 0; i < numsatst; i++) {
         sats[i] = static_cast<struct iwsat*>(calloc(1, sizeof(struct iwsat)));
         if (sats[i] == nullptr) {
