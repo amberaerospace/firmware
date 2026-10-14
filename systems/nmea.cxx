@@ -29,7 +29,7 @@ static double stod_s(const std::string& s) {
     try {
         return std::stod(s);
     } catch (...) {
-        return 0.0f;
+        return 0.0;
     }
 }
 
@@ -67,24 +67,19 @@ std::string nmea_ident(const std::string& msg) {
 std::vector<std::string> nmea_idents(const std::string& msg) {
     std::vector<std::string> result;
     if (msg.empty()) return result;
-
     const auto star = msg.find('*');
     const std::string buf = msg.substr(0, star);
-
     size_t start = 0;
 
     while (true) {
         const auto pos = buf.find(',', start);
-
         if (pos == std::string::npos) {
             result.push_back(buf.substr(start));
             break;
         }
-
         result.push_back(buf.substr(start, pos - start));
         start = pos + 1;
     }
-
     return result;
 }
 
@@ -126,7 +121,7 @@ struct nmea_clock* nmea_time(const std::string& buf) {
 
 struct nmea_lat* nmea_clat(const std::string& buf) {
     if (buf.empty()) return nullptr;
-    if (buf.length() < 10) return nullptr;
+    if (buf.length() < 4) return nullptr;
     const std::string dd = buf.substr(0, 2);
     const std::string mm = buf.substr(2);
     const auto ddi = static_cast<int8_t>(stoi_s(dd));
@@ -140,7 +135,7 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
 
 struct nmea_lon* nmea_clon(const std::string& buf) {
     if (buf.empty()) return nullptr;
-    if (buf.length() < 11) return nullptr;
+    if (buf.length() < 5) return nullptr;
     const std::string dd = buf.substr(0, 3);
     const std::string mm = buf.substr(3);
     const auto ddi = static_cast<int16_t>(stoi_s(dd));
@@ -383,7 +378,7 @@ struct gngsa_msg* nmea_gngsa(const std::string& buf) {
     auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
     vec.erase(vec.begin());
-    if (vec.size() < 18) return nullptr;
+    if (vec.size() < 17) return nullptr;
 
     const auto nm = static_cast<struct gngsa_msg*>(calloc(1, sizeof(struct gngsa_msg)));
     if (nm == nullptr) return nullptr;
@@ -483,7 +478,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     const auto callv = static_cast<char*>(calloc(3, sizeof(char)));
     if (callv == nullptr) return nullptr;
 
-    memcpy(callv, mn, 2 * sizeof(char));
+    memcpy(callv, mn + 1, 2 * sizeof(char));
     callv[2] = '\0';
     vec.erase(vec.begin());
     if (vec.size() < 4) {
