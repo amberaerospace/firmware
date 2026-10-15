@@ -539,6 +539,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
         return nullptr;
     }
     for (auto i = 0; i < numsatst; i++) {
+        std::cout << "loop" << " " << i << std::endl;
         sats[i] = static_cast<struct iwsat*>(calloc(1, sizeof(struct iwsat)));
         if (sats[i] == nullptr) {
             free(callv);
