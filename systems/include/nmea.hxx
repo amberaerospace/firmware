@@ -123,6 +123,7 @@ struct iwsat {
     int8_t elev;
     int16_t azimuth;
     int8_t cno;
+    bool active;
 };
 
 struct gxgsv_msg {
