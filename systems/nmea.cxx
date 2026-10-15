@@ -519,8 +519,6 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     }
 
     const auto numsatst = static_cast<int>((vec.size() - ((vec.size() - 4) % 4)) / 4);
-#include <iostream>
-    std::cout << numsatst << " " << vec.size() << std::endl;
 
     const auto nm = static_cast<struct gxgsv_msg*>(calloc(1, sizeof(struct gxgsv_msg)));
     if (nm == nullptr) {
@@ -531,7 +529,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     const auto sentences = static_cast<int8_t>(stoi_s(vec[0]));
     const auto sentnum = static_cast<int8_t>(stoi_s(vec[1]));
     const auto numsats = static_cast<int16_t>(stoi_s(vec[2]));
-    const auto sigid = vec.size() >= ((numsatst * 4) + 3) ? static_cast<int16_t>(stoi_s(vec[((numsatst * 4) + 3)])) : 0;
+    const auto sigid = vec.size() > ((numsatst * 4) + 3) ? static_cast<int16_t>(stoi_s(vec[((numsatst * 4) + 3)])) : 0;
     const auto sats = static_cast<struct iwsat**>(calloc(4, sizeof(struct iwsat*)));
     if (sats == nullptr) {
         free(callv);
@@ -539,7 +537,6 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
         return nullptr;
     }
     for (auto i = 0; i < numsatst; i++) {
-        std::cout << "loop" << " " << i << std::endl;
         sats[i] = static_cast<struct iwsat*>(calloc(1, sizeof(struct iwsat)));
         if (sats[i] == nullptr) {
             free(callv);
