@@ -126,13 +126,7 @@ struct nmea_clock* nmea_time(const std::string& buf) {
     return nmtime;
 }
 
-#ifdef NMEAC_DEBUG
-#include <iostream>
-#endif
 struct nmea_lat* nmea_clat(const std::string& buf) {
-#ifdef NMEAC_DEBUG
-    std::cout << buf << " len " << buf.length() << std::endl;
-#endif
     const auto nm = static_cast<struct nmea_lat*>(calloc(1, sizeof(struct nmea_lat)));
     if (nm == nullptr) return nullptr;
 
@@ -151,9 +145,6 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
 }
 
 struct nmea_lon* nmea_clon(const std::string& buf) {
-#ifdef NMEAC_DEBUG
-    std::cout << buf << " len " << buf.length() << std::endl;
-#endif
     const auto nm = static_cast<struct nmea_lon*>(calloc(1, sizeof(struct nmea_lon)));
     if (nm == nullptr) return nullptr;
 
@@ -430,7 +421,7 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
     vec.erase(vec.begin());
-    if (vec.size() < 13) return nullptr;
+    if (vec.size() < 12) return nullptr;
 
     const auto nm = static_cast<struct gnrmc_msg*>(calloc(1, sizeof(struct gnrmc_msg)));
     if (nm == nullptr) return nullptr;
