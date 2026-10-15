@@ -470,9 +470,15 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     const auto magvar = stod_s(vec[9]);
 
     const std::string dt = vec[8];
-    const int8_t day = static_cast<int8_t>(stoi_s(dt.substr(0, 2)));
-    const int8_t month = static_cast<int8_t>(stoi_s(dt.substr(2, 2)));
-    const int8_t year = static_cast<int8_t>(stoi_s(dt.substr(4, 2)));
+    if (dt.length() >= 6) {
+        const int8_t day = static_cast<int8_t>(stoi_s(dt.substr(0, 2)));
+        const int8_t month = static_cast<int8_t>(stoi_s(dt.substr(2, 2)));
+        const int8_t year = static_cast<int8_t>(stoi_s(dt.substr(4, 2)));
+    } else {
+        constexpr auto day = static_cast<int8_t>(0);
+        constexpr auto month = static_cast<int8_t>(0);
+        constexpr auto year = static_cast<int8_t>(0);
+    }
 
     nm->time = tm;
     nm->status = status;
