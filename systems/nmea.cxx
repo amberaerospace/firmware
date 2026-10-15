@@ -128,13 +128,18 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
 #ifdef NMEAC_DEBUG
     std::cout << buf << " len " << buf.length() << std::endl;
 #endif
-    if (buf.length() < 4) return nullptr;
+    const auto nm = static_cast<struct nmea_lat*>(calloc(1, sizeof(struct nmea_lat)));
+    if (nm == nullptr) return nullptr;
+
+    if (buf.length() < 4) {
+        nm->lat = 0;
+        nm->latdeg = 0;
+        return nm;
+    }
     const std::string dd = buf.substr(0, 2);
     const std::string mm = buf.substr(2);
     const auto ddi = static_cast<int8_t>(stoi_s(dd));
     const long double mmf = stod_s(mm);
-    const auto nm = static_cast<struct nmea_lat*>(calloc(1, sizeof(struct nmea_lat)));
-    if (nm == nullptr) return nullptr;
     nm->lat = mmf;
     nm->latdeg = ddi;
     return nm;
@@ -144,13 +149,18 @@ struct nmea_lon* nmea_clon(const std::string& buf) {
 #ifdef NMEAC_DEBUG
     std::cout << buf << " len " << buf.length() << std::endl;
 #endif
-    if (buf.length() < 5) return nullptr;
+    const auto nm = static_cast<struct nmea_lon*>(calloc(1, sizeof(struct nmea_lon)));
+    if (nm == nullptr) return nullptr;
+
+    if (buf.length() < 5) {
+        nm->lon = 0;
+        nm->londeg = 0;
+        return nm;
+    }
     const std::string dd = buf.substr(0, 3);
     const std::string mm = buf.substr(3);
     const auto ddi = static_cast<int16_t>(stoi_s(dd));
     const long double mmf = stod_s(mm);
-    const auto nm = static_cast<struct nmea_lon*>(calloc(1, sizeof(struct nmea_lon)));
-    if (nm == nullptr) return nullptr;
     nm->lon = mmf;
     nm->londeg = ddi;
     return nm;
