@@ -108,7 +108,7 @@ struct nmea_clock* nmea_time(const std::string& buf) {
     const auto nmtime = static_cast<struct nmea_clock*>(calloc(1, sizeof(struct nmea_clock)));
     if (nmtime == nullptr) return nullptr;
 
-    if (buf.length() < 9) {
+    if (buf.length() < 6) {
         nmtime->hours = 0;
         nmtime->minutes = 0;
         nmtime->seconds = 0;
