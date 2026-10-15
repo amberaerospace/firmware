@@ -10,27 +10,15 @@
  */
 
 static int stoi_s(const std::string& s) {
-    try {
-        return std::stoi(s);
-    } catch (...) {
-        return 0;
-    }
+    return static_cast<int>(strtol(s.c_str(), nullptr, 10));
 }
 
 static float stof_s(const std::string& s) {
-    try {
-        return std::stof(s);
-    } catch (...) {
-        return 0.0f;
-    }
+    return strtof(s.c_str(), nullptr);
 }
 
 static double stod_s(const std::string& s) {
-    try {
-        return std::stod(s);
-    } catch (...) {
-        return 0.0;
-    }
+    return strtod(s.c_str(), nullptr);
 }
 
 std::string nmea_ident(const std::string& msg) {
