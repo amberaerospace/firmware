@@ -125,7 +125,7 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
     const std::string dd = buf.substr(0, 2);
     const std::string mm = buf.substr(2);
     const auto ddi = static_cast<int8_t>(stoi_s(dd));
-    const long double mmf = stof_s(mm);
+    const long double mmf = stod_s(mm);
     const auto nm = static_cast<struct nmea_lat*>(calloc(1, sizeof(struct nmea_lat)));
     if (nm == nullptr) return nullptr;
     nm->lat = mmf;
@@ -139,7 +139,7 @@ struct nmea_lon* nmea_clon(const std::string& buf) {
     const std::string dd = buf.substr(0, 3);
     const std::string mm = buf.substr(3);
     const auto ddi = static_cast<int16_t>(stoi_s(dd));
-    const long double mmf = stof_s(mm);
+    const long double mmf = stod_s(mm);
     const auto nm = static_cast<struct nmea_lon*>(calloc(1, sizeof(struct nmea_lon)));
     if (nm == nullptr) return nullptr;
     nm->lon = mmf;
