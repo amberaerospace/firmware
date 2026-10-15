@@ -105,16 +105,21 @@ bool nmea_checksum(const std::string& msg) {
 }
 
 struct nmea_clock* nmea_time(const std::string& buf) {
-    if (buf.empty()) return nullptr;
-    if (buf.length() < 9) return nullptr;
+    const auto nmtime = static_cast<struct nmea_clock*>(calloc(1, sizeof(struct nmea_clock)));
+    if (nmtime == nullptr) return nullptr;
+
+    if (buf.length() < 9) {
+        nmtime->hours = 0;
+        nmtime->minutes = 0;
+        nmtime->seconds = 0;
+        return nmtime;
+    }
     const std::string hh = buf.substr(0, 2);
     const std::string mm = buf.substr(2, 2);
     const std::string ss = buf.substr(4);
     const auto hhi = static_cast<int8_t>(stoi_s(hh));
     const auto mmi = static_cast<int8_t>(stoi_s(mm));
     const double ssf = stof_s(ss);
-    const auto nmtime = static_cast<struct nmea_clock*>(calloc(1, sizeof(struct nmea_clock)));
-    if (nmtime == nullptr) return nullptr;
     nmtime->hours = hhi;
     nmtime->minutes = mmi;
     nmtime->seconds = ssf;
