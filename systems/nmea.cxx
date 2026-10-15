@@ -4,11 +4,9 @@
 #include <cstdlib>
 #include <vector>
 #include <cstdint>
-#include <iostream>
-#include <ostream>
 
 /*
- * GPS NMEA message utilities
+ * NMEA message utilities
  */
 
 static int stoi_s(const std::string& s) {
