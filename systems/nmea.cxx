@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <vector>
 #include <cstdint>
+#include <iostream>
+#include <ostream>
 
 /*
  * GPS NMEA message utilities
@@ -119,7 +121,13 @@ struct nmea_clock* nmea_time(const std::string& buf) {
     return nmtime;
 }
 
+#ifdef NMEAC_DEBUG
+#include <iostream>
+#endif
 struct nmea_lat* nmea_clat(const std::string& buf) {
+#ifdef NMEAC_DEBUG
+    std::cout << buf << " len " << buf.length() << std::endl;
+#endif
     if (buf.empty()) return nullptr;
     if (buf.length() < 4) return nullptr;
     const std::string dd = buf.substr(0, 2);
@@ -134,6 +142,9 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
 }
 
 struct nmea_lon* nmea_clon(const std::string& buf) {
+#ifdef NMEAC_DEBUG
+    std::cout << buf << " len " << buf.length() << std::endl;
+#endif
     if (buf.empty()) return nullptr;
     if (buf.length() < 5) return nullptr;
     const std::string dd = buf.substr(0, 3);
