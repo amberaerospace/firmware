@@ -9,8 +9,8 @@
  * NMEA message utilities
  */
 
-static int stoi_s(const std::string& s) {
-    return static_cast<int>(strtol(s.c_str(), nullptr, 10));
+static long stoi_s(const std::string& s) {
+    return strtol(s.c_str(), nullptr, 10);
 }
 
 static float stof_s(const std::string& s) {
