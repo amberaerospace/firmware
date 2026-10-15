@@ -513,7 +513,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     memcpy(callv, mn + 1, 2 * sizeof(char));
     callv[2] = '\0';
     vec.erase(vec.begin());
-    if (vec.size() < 4) {
+    if (vec.size() < 3) {
         free(callv);
         return nullptr;
     }
@@ -529,7 +529,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     const auto sentences = static_cast<int8_t>(stoi_s(vec[0]));
     const auto sentnum = static_cast<int8_t>(stoi_s(vec[1]));
     const auto numsats = static_cast<int16_t>(stoi_s(vec[2]));
-    const auto sigid = static_cast<int16_t>(stoi_s(vec[((numsats * 4) + 3)]));
+    const auto sigid = vec.size() >= ((numsatst * 4) + 3) ? static_cast<int16_t>(stoi_s(vec[((numsatst * 4) + 3)])) : 0;
     const auto sats = static_cast<struct iwsat**>(calloc(4, sizeof(struct iwsat*)));
     if (sats == nullptr) {
         free(callv);
@@ -586,6 +586,7 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     nm->sentences = sentences;
     nm->sigid = sigid;
     nm->sats = sats;
+    nm->numsats = numsats;
 
     return nm;
 }
