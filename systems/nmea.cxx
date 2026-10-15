@@ -423,11 +423,7 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     auto vec = nmea_idents(buf);
     if (vec.empty()) return nullptr;
     vec.erase(vec.begin());
-#ifndef NMEA_NAVSTAT
     if (vec.size() < 12) return nullptr;
-#else
-    if (vec.size() < 13) return nullptr;
-#endif
 
     const auto nm = static_cast<struct gnrmc_msg*>(calloc(1, sizeof(struct gnrmc_msg)));
     if (nm == nullptr) return nullptr;
@@ -456,11 +452,7 @@ struct gnrmc_msg* nmea_gnrmc(const std::string& buf) {
     const char lonew = *(vec[5].c_str());
     const char magvarew = *(vec[10].c_str());
     const char mode = *(vec[11].c_str());
-#ifndef NMEA_NAVSTAT
-    constexpr char navstat = 'V';
-#else
-    const char navstat = *(vec[12].c_str());
-#endif
+    const char navstat = vec.size() >= 13 ? *(vec[12].c_str()) : 'V';
     const char status = *(vec[1].c_str());
 
     const auto speed = stod_s(vec[6]);
