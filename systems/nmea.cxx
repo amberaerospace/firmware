@@ -128,7 +128,6 @@ struct nmea_lat* nmea_clat(const std::string& buf) {
 #ifdef NMEAC_DEBUG
     std::cout << buf << " len " << buf.length() << std::endl;
 #endif
-    if (buf.empty()) return nullptr;
     if (buf.length() < 4) return nullptr;
     const std::string dd = buf.substr(0, 2);
     const std::string mm = buf.substr(2);
@@ -145,7 +144,6 @@ struct nmea_lon* nmea_clon(const std::string& buf) {
 #ifdef NMEAC_DEBUG
     std::cout << buf << " len " << buf.length() << std::endl;
 #endif
-    if (buf.empty()) return nullptr;
     if (buf.length() < 5) return nullptr;
     const std::string dd = buf.substr(0, 3);
     const std::string mm = buf.substr(3);
