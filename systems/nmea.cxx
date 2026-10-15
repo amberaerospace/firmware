@@ -519,6 +519,8 @@ struct gxgsv_msg* nmea_gxgsv(const std::string& buf) {
     }
 
     const auto numsatst = static_cast<int>((vec.size() - ((vec.size() - 4) % 4)) / 4);
+#include <iostream>
+    std::cout << numsatst << " " << vec.size() << std::endl;
 
     const auto nm = static_cast<struct gxgsv_msg*>(calloc(1, sizeof(struct gxgsv_msg)));
     if (nm == nullptr) {
