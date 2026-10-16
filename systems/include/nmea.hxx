@@ -55,7 +55,7 @@ struct gngll_msg {
 struct gngsa_msg {
     char modeop;
     char modenav;
-    int8_t ids[12];
+    int16_t ids[12];
     double pdop;
     double hdop;
     double vdop;

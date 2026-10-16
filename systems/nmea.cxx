@@ -388,7 +388,7 @@ struct gngsa_msg* nmea_gngsa(const std::string& buf) {
     nm->modenav = static_cast<char>(*(vec[1].c_str()));
 
     for (auto i = 2; i <= 13; i++) {
-        nm->ids[i - 2] = static_cast<int8_t>(stoi_s(vec[i]));
+        nm->ids[i - 2] = static_cast<int16_t>(stoi_s(vec[i]));
     }
 
     nm->pdop = static_cast<double>(stod_s(vec[14]));
